@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # api:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: fastapi_vinay
+  #   ports:
+  #     - "80:80"
+
+
+  postgres:
+    image: postgres:15
+    hostname: postgres
+    restart: always
+    container_name: postgres_vinay
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: postgresPassword
+    volumes:
+      - postgres_backup:/var/lib/postgresql/data
+  
+  pgweb:
+    image: sosedoff/pgweb
+    restart: always
+    container_name: pgweb_vinay
+    ports:
+      - "8081:8081"
+    links:
+      - postgres:postgres
+    environment:
+      - DATABASE_URL=postgres://postgres:postgresPassword@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
+volumes:
+  postgres_backup:
+    

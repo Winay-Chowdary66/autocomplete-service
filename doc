@@ -1,0 +1,76 @@
+#! /bin/bash
+
+
+CMD=$1
+CONTAINER_NAME=$2
+# all containers list
+CONTAINERS="$(docker ps -a -q)"
+# lenght of contianers running
+CONTAINERS_RUNNING=${#CONTAINERS}
+
+case $CMD in
+    build)
+    if [ 0 -lt ${CONTAINERS_RUNNING} ]; then
+        echo "Already built workspace..."
+        echo "$(docker ps --format {{.Names}})"
+        echo "Please run help for further assistance"
+    else
+        echo "Building the containers...."
+        docker compose up --build -d
+        echo "Available containers"
+        echo "$(docker ps --format {{.Names}})"
+        echo ""
+        echo "pgweb is running on port: 8081"
+        echo "postgresql is running on port: 5432"
+        echo ""
+        sleep 10s
+    fi
+    ;;
+    clean)
+    echo "Deep cleaning started..."
+    echo "Stopping containers"
+    docker compose down
+    echo "Removing all images"
+    docker rmi -f $(docker images -aq)
+    echo "Remvoing volumes"
+    docker volume rm $(docker volume ls -q)
+    echo "Deleting all containers"
+    docker rm -f $(docker ps -a -q)
+    sleep 1s
+    ;;
+    logs)
+    echo "Running Logs......."
+    docker logs $CONTAINER_NAME
+    ;;
+    rebuild)
+    echo "Rebuilding Workspace....."
+    sleep 1s
+    ./doc clean
+    sleep 2s
+    ./doc build
+    ;;
+    etl)
+    if [ 0 -lt ${CONTAINERS_RUNNING} ]; then
+        echo "Running ETL process"
+        python etl/main.py
+    else
+        echo "Cannot start ETL process as project is not built"
+        echo "Please build the workspace"
+    fi
+    ;;
+    *)
+    echo " docker build -t autocomplete-app . "
+    echo " docker run -d -p 80:80 autocomplete-app "
+    echo " python -m uvicorn src.main:_app --host 0.0.0.0 --port 8001 "
+    echo "Available cmds:
+commands:
+    build       To Build the contianers and up the database servers
+    clean       To deeply clean the local setup
+    logs        Shows logs in an container
+    rebuild     To deep clean and Build the workspace again
+    etl         Starts ETL process from excel file
+    "
+    ;;
+
+esac
+exit 0;
