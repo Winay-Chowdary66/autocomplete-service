@@ -3,7 +3,6 @@ import psycopg2
 class Database(object):
     def __init__(self, database_url) -> None:
         self.database_url = database_url
-        print(database_url)
         self.connection = None
         self.cursor = None
         self.connect()
@@ -30,7 +29,6 @@ class Database(object):
     def create_table_if_not_exists(self, dataframe, table_name):
         create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} ("
         for col_name, col_type in zip(dataframe.columns, dataframe.dtypes):
-            print([col_name, col_type])
             col_name = "_".join(col_name.split(" "))
             if "int" in str(col_type):
                 col_type_str = "BIGINT"
@@ -48,13 +46,7 @@ class Database(object):
     def load_dataframe(self, df, table_name, rows):
         try:
             columns = tuple(['_'.join(col.split(" ")).lower() for col in list(df.columns)])
-            # print(columns)
-            print("DF")
-            print(df.dtypes)
             insert_query = f"INSERT INTO {table_name} ({', '.join(columns)}) VALUES ({', '.join(['%s'] * len(df.columns))});"
-            # print(insert_query)
-            print(f"rows")
-            # print(rows)
             self.cursor.executemany(insert_query, rows)
             self.connection.commit()
         except ValueError:
