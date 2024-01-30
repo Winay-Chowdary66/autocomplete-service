@@ -5,7 +5,7 @@ CMD=$1
 CONTAINER_NAME=$2
 # all containers list
 CONTAINERS="$(docker ps -a -q)"
-# lenght of contianers running
+# length of contianers running
 CONTAINERS_RUNNING=${#CONTAINERS}
 
 case $CMD in
@@ -19,6 +19,10 @@ case $CMD in
         docker compose up --build -d
         echo "Available containers"
         echo "$(docker ps --format {{.Names}})"
+        echo ""
+        echo "Subnet Mask for Netowrks Running"
+        echo "10.0.0.0/16"
+        echo "Find more at https://docs.docker.com/engine/reference/commandline/network/"
         echo ""
         echo "pgweb is running on port: 8081"
         echo "postgresql is running on port: 5432"
@@ -58,6 +62,14 @@ case $CMD in
         echo "Please build the workspace"
     fi
     ;;
+    exec)
+    if [ -z ${CONTAINER_NAME} ]; then
+        echo "Please specify conainer name"
+        echo "Run Build to know containers running"
+    else 
+        docker $*
+    fi
+    ;;
     *)
     echo " docker build -t autocomplete-app . "
     echo " docker run -d -p 80:80 autocomplete-app "
@@ -69,6 +81,7 @@ commands:
     logs        Shows logs in an container
     rebuild     To deep clean and Build the workspace again
     etl         Starts ETL process from excel file
+    exec        To Execute commands inside container
     "
     ;;
 

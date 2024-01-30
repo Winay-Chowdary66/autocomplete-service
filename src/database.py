@@ -5,23 +5,23 @@ from typing import List, Optional, Dict, Any
 class Database(object):
     def __init__(self, database_url) -> None:
         self.database_url = database_url
-        print(database_url)
         self.connection = None
         self.cursor = None
         self.connect()
 
+    # connect to database
     def connect(self):
         self.connection = psycopg2.connect(self.database_url, sslmode="prefer")
         self.cursor = self.connection.cursor()
         print("Successfully connected to the database")
 
+    # close the database conection
     def close(self):
         self.cursor.close()
         self.connection.close()
         print("Closed connection to the database")
 
     # Function to get data from PostgreSQL based on input parameters
-
     def get_data_from_postgres(self,
             table_name:str,
             keyword: Optional[str] = None,

@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from src.database import Database
 # from etl.load import Load
-from src.config import EXCEL_DATA_PATH
+from src.config import EXCEL_DATA_PATH, DATABASE_URL
 from typing import Dict, List, Optional, Any, Union
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,10 +21,7 @@ _app.add_middleware(
 
 
 def get_database_url():
-    return os.environ.get(
-        "DATABASE_URL",
-        "postgres://postgres:postgresPassword@172.22.0.2:5432/postgres?sslmode=disable"
-    )
+    return DATABASE_URL
 
 
 def __main__():
@@ -47,12 +44,9 @@ async def autocomplete_search(
 
     database_url = get_database_url()
     db = Database(database_url=database_url)
-    # print("database_url")
-    # load = Load(self)
     print("Filtering the Data")
     data = db.get_data_from_postgres(table_name="product_slate", keyword=keyword, symbol=symbol, instrument_types=instrument_types, category=category,
                                      schema=schema, publisher=publisher, region=region, available_history=available_history, page=page, page_size=page_size)
-    print(data)
     db.close()
     return data
 
