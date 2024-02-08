@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+spec:
+  containers:
+  - name: postresql
+    image: postgres:latest
+    env:
+    - name: POSGRES_DB
+      value: postgres
+    - name: POSTGRES_PASSWORD
+      value: postgresPassword
+    ports:
+    - containerPort: 5432

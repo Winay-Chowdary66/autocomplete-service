@@ -28,6 +28,16 @@ services:
       - postgres_backup:/var/lib/postgresql/data
     networks:
       - gateway
+
+  metabase:
+    image: metabase/metabase
+    hostname: metabase_vinay
+    container_name: metabase_vinay
+    ports:
+      - "3000:3000"
+    networks:
+      - gateway
+
   
   pgweb:
     image: sosedoff/pgweb

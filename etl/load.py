@@ -9,7 +9,7 @@ class Load(object):
 
     def load_dataframe(self):
         database_name = "development"
-        table_name = "product_slate"
+        table_name = "war_room_profiles"
         
         self.db.create_db_if_not_exists(database_name)
         

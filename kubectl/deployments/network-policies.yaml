@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-pgweb-postgresql
+spec:
+  podSelector:
+    matchLabels:
+      app: pgweb
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: postgresql
+
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-metabase-postgresql
+spec:
+  podSelector:
+    matchLabels:
+      app: metabase
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: postgresql
